@@ -110,7 +110,7 @@ document.getElementById("memberForm").addEventListener("submit", function(e){
   };
 
   // 🔥 Fetch POST to Firebase
-  fetch(FIREBASE_URL + "/" + category + ".json", {
+  fetch(FIREBASE_URL + "https://bangla-puka-data-127ad-default-rtdb.firebaseio.com/" + category + ".json", {
     method: "POST",
     body: JSON.stringify(data)
   })
