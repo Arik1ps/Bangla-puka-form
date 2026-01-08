@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>বাংলা পোকার সদস্য আবেদন</title>
+
+<style>
+body{
+  font-family:sans-serif;
+  background:#eef2f5;
+  padding:10px;
+}
+.container{
+  background:#fff;
+  padding:15px;
+  border-radius:10px;
+  max-width:500px;
+  margin:auto;
+}
+h2{text-align:center;}
+label{
+  display:block;
+  margin-top:12px;
+  font-weight:bold;
+}
+input, textarea, select, button{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  box-shadow:1px 1px 4px rgba(0,0,0,0.1);
+  font-size:15px;
+}
+button{
+  background:#000;
+  color:#fff;
+  cursor:pointer;
+}
+button:hover{
+  background:#333;
+}
+.success{
+  display:none;
+  margin-top:15px;
+  color:green;
+  text-align:center;
+  font-weight:bold;
+}
+hr{
+  margin:20px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>বাংলা পোকার সদস্য আবেদন ফর্ম</h2>
+
+<form id="memberForm">
+
+<label>নাম (বাংলা)</label>
+<input id="name" required>
+
+<label>পিতার নাম</label>
+<input id="father">
+
+<label>মাতার নাম</label>
+<input id="mother">
+
+<label>জন্ম তারিখ</label>
+<input type="date" id="birth">
+
+<label>লিঙ্গ</label>
+<select id="gender">
+  <option>পুরুষ</option>
+  <option>নারী</option>
+  <option>অন্যান্য</option>
+</select>
+
+<label>রক্তের গ্রুপ</label>
+<input id="blood">
+
+<label>মোবাইল নম্বর</label>
+<input id="mobile" required>
+
+<label>বর্তমান ঠিকানা</label>
+<textarea id="present"></textarea>
+
+<label>স্থায়ী ঠিকানা</label>
+<textarea id="permanent"></textarea>
+
+<label>আবেদনের বিভাগ</label>
+<select id="category">
+  <option value="সদস্য">সদস্য</option>
+  <option value="ইভেন্ট">ইভেন্ট</option>
+  <option value="স্বেচ্ছাসেবক">স্বেচ্ছাসেবক</option>
+</select>
+
+<label>আগ্রহের ক্ষেত্র</label>
+<select id="interest">
+  <option>বিতর্ক</option>
+  <option>আবৃত্তি</option>
+  <option>নাটক</option>
+  <option>সংগীত</option>
+  <option>সাহিত্য</option>
+  <option>অন্যান্য</option>
+</select>
+
+<label>
+<input type="checkbox" required>
+ আমি ঘোষণা করছি যে উপরের সকল তথ্য সত্য
+</label>
+
+<button type="submit">জমা দিন</button>
+
+<div class="success" id="successMsg">
+আপনার আবেদন সফলভাবে জমা হয়েছে
+</div>
+</form>
+
+<hr>
+<h3>Admin Panel Access</h3>
+<label>পিন লিখুন:</label>
+<input type="password" id="adminPin" placeholder="পিন দিন">
+<button onclick="goToAdmin()">জমা দিন</button>
+
+</div>
+
+<script>
+// 🔴 এখানে Firebase URL বসাও
+const FIREBASE_URL = "https://YOUR_PROJECT_NAME-default-rtdb.firebaseio.com";
+
+document.getElementById("memberForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const category = document.getElementById("category").value;
+
+  const data = {
+    নাম: document.getElementById("name").value,
+    পিতার_নাম: document.getElementById("father").value,
+    মাতার_নাম: document.getElementById("mother").value,
+    জন্ম_তারিখ: document.getElementById("birth").value,
+    লিঙ্গ: document.getElementById("gender").value,
+    রক্তের_গ্রুপ: document.getElementById("blood").value,
+    মোবাইল: document.getElementById("mobile").value,
+    বর্তমান_ঠিকানা: document.getElementById("present").value,
+    স্থায়ী_ঠিকানা: document.getElementById("permanent").value,
+    আগ্রহ: document.getElementById("interest").value,
+    জমার_সময়: new Date().toLocaleString("bn-BD")
+  };
+
+  fetch(FIREBASE_URL + "/" + category + ".json", {
+    method: "POST",
+    body: JSON.stringify(data)
+  }).then(() => {
+    document.getElementById("successMsg").style.display = "block";
+    document.getElementById("memberForm").reset();
+  });
+});
+
+// 🔐 Admin PIN function
+function goToAdmin(){
+  const pin = document.getElementById("adminPin").value;
+  const correctPin = "9089"; // তুমি চাইলে change করতে পারো
+
+  if(pin === correctPin){
+    window.location.href = "admin.html";
+  } else {
+    alert("পিন ভুল! অনুমতি নেই।");
+  }
+}
+</script>
+
+</body>
+</html>
