@@ -5,56 +5,19 @@
 <title>বাংলা পোকার সদস্য আবেদন</title>
 
 <style>
-body{
-  font-family:sans-serif;
-  background:#eef2f5;
-  padding:10px;
-}
-.container{
-  background:#fff;
-  padding:15px;
-  border-radius:10px;
-  max-width:500px;
-  margin:auto;
-}
+body{font-family:sans-serif;background:#eef2f5;padding:10px;}
+.container{background:#fff;padding:15px;border-radius:10px;max-width:500px;margin:auto;}
 h2{text-align:center;}
-label{
-  display:block;
-  margin-top:12px;
-  font-weight:bold;
-}
-input, textarea, select, button{
-  width:100%;
-  padding:8px;
-  margin-top:5px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  box-shadow:1px 1px 4px rgba(0,0,0,0.1);
-  font-size:15px;
-}
-button{
-  background:#000;
-  color:#fff;
-  cursor:pointer;
-}
-button:hover{
-  background:#333;
-}
-.success{
-  display:none;
-  margin-top:15px;
-  color:green;
-  text-align:center;
-  font-weight:bold;
-}
-hr{
-  margin:20px 0;
-}
+label{display:block;margin-top:12px;font-weight:bold;}
+input, textarea, select, button{width:100%;padding:8px;margin-top:5px;border-radius:8px;border:1px solid #ccc;box-shadow:1px 1px 4px rgba(0,0,0,0.1);font-size:15px;}
+button{background:#000;color:#fff;cursor:pointer;}
+button:hover{background:#333;}
+.success{display:none;margin-top:15px;color:green;text-align:center;font-weight:bold;}
+hr{margin:20px 0;}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 <h2>বাংলা পোকার সদস্য আবেদন ফর্ম</h2>
 
@@ -109,15 +72,11 @@ hr{
 </select>
 
 <label>
-<input type="checkbox" required>
- আমি ঘোষণা করছি যে উপরের সকল তথ্য সত্য
+<input type="checkbox" required> আমি ঘোষণা করছি যে উপরের সকল তথ্য সত্য
 </label>
 
 <button type="submit">জমা দিন</button>
-
-<div class="success" id="successMsg">
-আপনার আবেদন সফলভাবে জমা হয়েছে
-</div>
+<div class="success" id="successMsg">আপনার আবেদন সফলভাবে জমা হয়েছে</div>
 </form>
 
 <hr>
@@ -125,12 +84,11 @@ hr{
 <label>পিন লিখুন:</label>
 <input type="password" id="adminPin" placeholder="পিন দিন">
 <button onclick="goToAdmin()">জমা দিন</button>
-
 </div>
 
 <script>
-// 🔴 এখানে Firebase URL বসাও
-const FIREBASE_URL = "https://YOUR_PROJECT_NAME-default-rtdb.firebaseio.com";
+// 🔴 Firebase URL এখানে বসাও
+const FIREBASE_URL = "https://bangla-puka-data-127ad-default-rtdb.firebaseio.com/";
 
 document.getElementById("memberForm").addEventListener("submit", function(e){
   e.preventDefault();
@@ -151,19 +109,24 @@ document.getElementById("memberForm").addEventListener("submit", function(e){
     জমার_সময়: new Date().toLocaleString("bn-BD")
   };
 
+  // 🔥 Fetch POST to Firebase
   fetch(FIREBASE_URL + "/" + category + ".json", {
     method: "POST",
     body: JSON.stringify(data)
-  }).then(() => {
+  })
+  .then(() => {
     document.getElementById("successMsg").style.display = "block";
     document.getElementById("memberForm").reset();
+  })
+  .catch((err) => {
+    alert("ডাটা জমা হয়নি! সমস্যা: " + err);
   });
 });
 
 // 🔐 Admin PIN function
 function goToAdmin(){
   const pin = document.getElementById("adminPin").value;
-  const correctPin = "9089"; // তুমি চাইলে change করতে পারো
+  const correctPin = "1234"; // PIN change করতে পারো
 
   if(pin === correctPin){
     window.location.href = "admin.html";
@@ -172,6 +135,5 @@ function goToAdmin(){
   }
 }
 </script>
-
 </body>
 </html>
