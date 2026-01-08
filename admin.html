@@ -90,7 +90,7 @@ const searchInput = document.getElementById("searchInput");
 // Fetch data from Firebase
 function fetchData(){
   const category = categorySelect.value;
-  fetch(FIREBASE_URL + "https://bangla-puka-data-127ad-default-rtdb.firebaseio.com/" + category + ".json")
+  fetch(FIREBASE_URL + "/" + category + ".json")
     .then(res=>res.json())
     .then(data=>{
       currentData = data || {};
