@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>বাংলা পোকার Admin Panel</title>
+<style>
+body{
+  font-family:sans-serif;
+  background:#f0f2f5;
+  padding:10px;
+}
+.container{
+  background:#fff;
+  padding:15px;
+  border-radius:10px;
+}
+h2{text-align:center;}
+select, input{
+  width:100%;
+  padding:8px;
+  margin-bottom:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+th, td{
+  border:1px solid #ccc;
+  padding:6px;
+  text-align:left;
+}
+th{
+  background:#000;
+  color:#fff;
+}
+tr:nth-child(even){background:#f9f9f9;}
+button{
+  padding:4px 8px;
+  border:none;
+  border-radius:4px;
+  cursor:pointer;
+}
+button.edit{background:#4CAF50;color:white;}
+button.delete{background:#f44336;color:white;}
+button:hover{opacity:0.8;}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h2>বাংলা পোকার Admin Panel</h2>
+
+<label>ডাটা দেখানোর বিভাগ নির্বাচন করুন:</label>
+<select id="categorySelect">
+  <option value="সদস্য">সদস্য</option>
+  <option value="ইভেন্ট">ইভেন্ট</option>
+  <option value="স্বেচ্ছাসেবক">স্বেচ্ছাসেবক</option>
+</select>
+
+<label>Search (নাম বা মোবাইল):</label>
+<input type="text" id="searchInput" placeholder="Search...">
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th>নাম</th>
+      <th>মোবাইল</th>
+      <th>আগ্রহ</th>
+      <th>জমার সময়</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="dataBody"></tbody>
+</table>
+
+</div>
+
+<script>
+// 🔴 Firebase URL
+const FIREBASE_URL = "https://YOUR_PROJECT_NAME-default-rtdb.firebaseio.com";
+
+let currentData = {}; // Store all data
+const categorySelect = document.getElementById("categorySelect");
+const dataBody = document.getElementById("dataBody");
+const searchInput = document.getElementById("searchInput");
+
+// Fetch data from Firebase
+function fetchData(){
+  const category = categorySelect.value;
+  fetch(FIREBASE_URL + "/" + category + ".json")
+    .then(res=>res.json())
+    .then(data=>{
+      currentData = data || {};
+      renderTable();
+    });
+}
+
+// Render table
+function renderTable(){
+  const searchTerm = searchInput.value.toLowerCase();
+  dataBody.innerHTML = "";
+  Object.entries(currentData).forEach(([key,item])=>{
+    if(searchTerm && 
+       !((item.নাম||"").toLowerCase().includes(searchTerm) || 
+         (item.মোবাইল||"").toLowerCase().includes(searchTerm))){
+      return;
+    }
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td contenteditable="true" data-field="নাম">${item.নাম||""}</td>
+      <td contenteditable="true" data-field="মোবাইল">${item.মোবাইল||""}</td>
+      <td contenteditable="true" data-field="আগ্রহ">${item.আগ্রহ||""}</td>
+      <td>${item.জমার_সময়||""}</td>
+      <td>
+        <button class="edit" onclick="editData('${key}', this)">Update</button>
+        <button class="delete" onclick="deleteData('${key}')">Delete</button>
+      </td>
+    `;
+    dataBody.appendChild(row);
+  });
+}
+
+// Edit/Update
+function editData(key, btn){
+  const row = btn.parentElement.parentElement;
+  const updatedData = {
+    ...currentData[key],
+    নাম: row.children[0].innerText,
+    মোবাইল: row.children[1].innerText,
+    আগ্রহ: row.children[2].innerText
+  };
+  const category = categorySelect.value;
+  fetch(FIREBASE_URL + "/" + category + "/" + key + ".json",{
+    method:"PUT",
+    body: JSON.stringify(updatedData)
+  }).then(()=>fetchData());
+}
+
+// Delete
+function deleteData(key){
+  if(confirm("আপনি কি সত্যিই ডিলিট করতে চান?")){
+    const category = categorySelect.value;
+    fetch(FIREBASE_URL + "/" + category + "/" + key + ".json",{
+      method:"DELETE"
+    }).then(()=>fetchData());
+  }
+}
+
+// Event listeners
+categorySelect.addEventListener("change", fetchData);
+searchInput.addEventListener("input", renderTable);
+
+// Initial load
+fetchData();
+</script>
+
+</body>
+</html>
